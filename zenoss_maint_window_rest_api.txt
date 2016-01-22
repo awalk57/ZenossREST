@@ -1,0 +1,73 @@
+
+Working with REST
+This is the approved revision of this page; it is not the most recent. View the most recent revision.
+
+You can use REST to execute virtually any dmd function as described in the How To Call A Method Using Rest documentation. As described there, the general form of a REST command is:
+
+    http://MY_ZENOSS_HOST:8080/PATH_TO_OBJECT/METHOD_NAME?ARG=VAL
+    For the above:
+        MY_ZENOSS_HOST : the hostname of your Zenoss server
+        PATH_TO_OBJECT : the object path, this can be found by navigating to any device in Zenoss and looking at the URL, It typically looks something like /zport/dmd/Devices/deviceClass/devices/hostname
+        METHOD_NAME: the dmd method to call
+        ARG=VAL: arguments to pass to the dmd method. Multiple arguments should be separated by '&'
+
+The following are some examples of common commands and how to call them via. REST using the curl command line tool. You can also embed the username and password into the url as "http://username:password@zenoss_host:8080".
+
+http://wiki.zenoss.org/Working_with_REST
+
+    Query the production state of a device
+
+$ curl --user '''''username''''':'''''password''''' http://'''''zenoss_host''''':8080/'''''object_path'''''/getProperty?id=productionState
+
+    Set a device into maintenance mode
+
+$ curl --user '''''username''''':'''''password''''' http://'''''zenoss_host''''':8080/'''''object_path'''''/manage_editDevice?productionState=300
+
+    Return a device to the production state
+
+$ curl --user '''''username''''':'''''password''''' http://'''''zenoss_host''''':8080/'''''object_path'''''/manage_editDevice?productionState=300
+
+    Maintenance windows (from http://community.zenoss.org/thread/18835)
+        object_path may be a device path or a group path
+        Add: http://zenoss_host:8080/object_path/manage_addMaintenanceWindow?newId=maintenance_window_name
+        List: http://zenoss_host:8080/object_path/getMaintenanceWindows
+        Edit: http://zenoss_host:8080/object_path/maintenanceWindows/maintenance_window_name/manage_editMaintenanceWindow?startDate=start_date,startHours=start_hour,startMinutes=start_min,durationDays=duration_days,durationHours=duration_hours,durationMinutes=duration_min
+        Delete: http://zenoss_host:8080/object_path/manage_deleteMaintenanceWindow?maintenanceIds=maintenance_window_name
+    Get an RRD Value
+        object_path may be a device path or component path
+        http://zenoss_host:8080/object_path/getRRDValue?dsname=datapoint_name
+
+    Edit User Groups
+
+example where ZenossTeam is the group name and ztestuser is the user being added or deleted GET /zport/dmd/ZenUsers/ZenossTeam?filter=&tableName=userlist&zenScreenName=editGroupSettings.pt&userids=ztestuser&manage_addUsersToGroup:method=OK GET /zport/dmd/ZenUsers/ZenossTeam?filter=&userids:list=ztestuser&tableName=userlist&zenScreenName=editGroupSettings.pt&manage_deleteUsersFromGroup:method=OK 
+
+-----------------------------------------------------------------------------------------------------------------------------
+
+Examples:
+
+Get Maintenance Windows:
+curl --user al:5752xx http://oi-zenos01-h3-s.njes.state.nj.us:8080/zport/dmd/Devices/Server/SSH/Linux/devices/oi-zenos01-h3-s.njes.state.nj.us//getMaintenanceWindows
+
+Create New Maintenance Window:
+curl --user al:5752xx http://oi-zenos01-h3-s.njes.state.nj.us:8080/zport/dmd/Devices/Server/SSH/Linux/devices/oi-zenos01-h3-s.njes.state.nj.us/manage_addMaintenanceWindow?newId=NewMW
+
+Delete Maintenance Window:
+curl --user al:5752xx http://oi-zenos01-h3-s.njes.state.nj.us:8080/zport/dmd/Devices/Server/SSH/Linux/devices/oi-zenos01-h3-s.njes.state.nj.us/manage_deleteMaintenanceWindow?maintenanceIds=NewMW
+
+
+Edit an Existing Maintenance Window:
+http://zenoss_host:8080/object_path/maintenanceWindows/maintenance_window_name/manage_editMaintenanceWindow?startDate=start_date,startHours=start_hour,startMinutes=start_min,durationDays=duration_days,durationHours=duration_hours,durationMinutes=duration_min
+Delete: http://zenoss_host:8080/object_path/manage_deleteMaintenanceWindow?maintenanceIds=maintenance_window_name
+
+curl --user al:5752xx "http://oi-zenos01-h3-s.njes.state.nj.us:8080/zport/dmd/Devices/Server/SSH/Linux/devices/oi-zenos01-h3-s.njes.state.nj.us/maintenanceWindows/NewMW/manage_editMaintenanceWindow?&startDate=01-20-2016&startHours=07&startMinutes=00&durationDays=00&durationHours=02&durationMinutes=00"
+
+
+
+
+
+
+
+
+curl --user al:5752xx http://oi-zenos01-h3-s.njes.state.nj.us:8080/zport/dmd/Devices/Server/SSH/Linux/devices/oi-zenos01-h3-s.njes.state.nj.us//getMaintenanceWindows
+
+
